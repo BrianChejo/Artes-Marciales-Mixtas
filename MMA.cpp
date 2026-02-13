@@ -12,48 +12,62 @@ struct sLuchador{
     int peso;
     int victorias;
     int derrotas;
-}
-struct sNodoLiga{
+};
+struct sNodoA{
     sLuchador luchador;
-    sNodoLiga* siguiente;
-}
+    sNodoA* siguiente;
+};
 typedef sLuchador top10[10];
 
 //Funciones a Utilzar
-
-
-
-
+void mostrarMenu();
+void incripcionAtleta(sNodoA* lstA, sLuchador nuevo, int &id_luchador);
+void generarMainCard(sNodoA* lstA, int id_luchador);
+void actualizarRecord(sNodoA* lstA);
+void guardarGym(FILE* arcLuchadores, sNodoA* lstA);
+void cargarGym(FILE* arcLuchadores, sNodoA* lstA, int &id_luchador);
+void vaciarLista(sNodoA* lstA);
+void insertarPorPeso(sNodoA* lstA, sLuchador luchador);
+sNodoA* buscarPorID(sNodoA* lstA, int id);
+int calcularPuntaje(sLuchador luchador);
+int cantidadLuchadores(FILE* arcLuchadores);
+int cargarPrimeros10(top10 rankLuchador, sNodoA* listaA);
+void ordenarTop10(top10 rankLuchador, int cantidad);
+void evaluarLuchador(top10 rankLuchador, int cantidad, sLuchador luchador);
 
 int main() {
     // Definion de variables a utilizarf
 	short opc;
+	int id_luchador = 0;
     top10 rankL = {0};
     sLuchador atleta;
-    sNodoA *lst_atletas = nullptr;
-    file* arcLuchadores;
-    cargarLista(arcLuchadores, lst_atletas);
-    
+    sNodoA *lst_atletas = 0;
+    FILE* arcLuchadores;
     do{
     	mostrarMenu();
 		cin>> opc;
     	switch(opc){
     		case 1:
-    			incripcionAtleta(lst_atletas, atleta);
+    			incripcionAtleta(lst_atletas, atleta, id_luchador);
     			break;
 			case 2:
-				generarMainCard();
+				generarMainCard(lst_atletas,id_luchador);
 				break;
 			case 3:
 				actualizarRecord(lst_atletas);
 				break;
 			case 4:
-				guardarGym();
+				guardarGym(arcLuchadores, lst_atletas);
 				break;
 			case 5:
-				cargarGym();
+				cargarGym(arcLuchadores, lst_atletas, id_luchador);
 				break;
-			default: break;
+			case 0:
+				vaciarLista(lst_atletas);
+				break;
+			default: 
+				cout<< "Opcion invalida"<<endl;
+				break;
 		}
     	
 	}while(opc!=0);
@@ -74,8 +88,10 @@ void mostrarMenu(){
 }
 
 // Funciones Principales ---------------------------------------
-void incripcionAtleta(sNodoA* lstA, sLuchador nuevo){
+void incripcionAtleta(sNodoA* lstA, sLuchador nuevo, int &id_luchador){
 	cout<< "                     INSCRIPCION ATLETA " << endl;
+	id_luchador++;
+	nuevo.id_luchador = id_luchador;
 	cout<< "Ingrese nombre: ";
 	cin>> nuevo.nombre;
 	cout<< "Ingrese apodo: ";
@@ -88,8 +104,19 @@ void incripcionAtleta(sNodoA* lstA, sLuchador nuevo){
 	cin>> nuevo.derrotas;
 	insertarPorPeso(lstA, nuevo);
 }
-void generarMainCard(){
-	
+void generarMainCard(sNodoA* lstA, int id_luchador){
+	if(id_luchador < 10){
+		cout<< "No hay suficientes luchadores" << endl;
+		return;
+	}
+	sNodoA* aux = lstA;
+	short cantP = 5;
+	cout<< "                     MAIN CARD " << endl;
+	cout<< "" << endl;
+	for (int i = 0; i < cantP; i++){
+		cout<< aux->luchador.nombre << "  vs " << aux->siguiente->luchador.nombre << endl;
+		aux = aux->siguiente->siguiente;
+	}
 }
 void actualizarRecord(sNodoA* lstA){
 	int id;
@@ -107,36 +134,28 @@ void actualizarRecord(sNodoA* lstA){
 	cout<< "Ingrese nuevas derrotas: ";
 	cin>> aux->luchador.derrotas;
 }
-void guardarGym(){
-
-}
-void cargarGym(){
-
-}
-// -------------------------------------------------------------
-// Funciones necesarias ----------------------------------------
-
-// vaciar lista
-// calcular puntaje
-// top 10
-void rankTop10(top10 rankL, sNodoA* lstA){
-	// llenar el top 10 con los primeros 10 luchadores de la lista
-
-	// seguir recorriendo la lista y si encuentra un luchador
-	// con mas puntaje que el ultimo del top 10, lo reemplaza
-	
-}
-// ...
-
-//--------------------------------------------------------------
-
-// Funciones secundarias ---------------------------------------
-void cargarLista(file* arcLuchadores, sNodoA* lstA){
-	arcLuchadores = fopen("luchadores.dat", "rb");
+void guardarGym(FILE* arcLuchadores, sNodoA* lstA){
+	arcLuchadores = fopen("luchadores.dat", "wb");
 	if(arcLuchadores == NULL){
 		cout<< "Error al abrir el archivo"<<endl;
 		return;
 	}
+	sNodoA* aux = lstA;
+	while(aux != NULL){
+		fwrite(&aux->luchador, sizeof(sLuchador), 1, arcLuchadores);
+		aux = aux->siguiente;
+	}
+	fclose(arcLuchadores);	
+}
+void cargarGym(FILE* arcLuchadores, sNodoA* lstA, int &id_luchador){
+	arcLuchadores = fopen("luchadores.dat", "rb");
+	if(arcLuchadores == NULL){
+		cout<< "Error al abrir el archivo"<<endl;
+		arcLuchadores = fopen("luchadores.dat", "wb");
+		fclose(arcLuchadores);
+		return;
+	}
+	id_luchador = cantidadLuchadores(arcLuchadores);
 	sLuchador aux;
 	while(!feof(arcLuchadores)){
 		fread(&aux, sizeof(sLuchador), 1, arcLuchadores);
@@ -144,8 +163,60 @@ void cargarLista(file* arcLuchadores, sNodoA* lstA){
 	}
 	fclose(arcLuchadores);
 }
+// -------------------------------------------------------------
 
-void insetarPorPeso(sNodoA* lstA, sLuchador luchador){
+
+// Funciones necesarias ----------------------------------------
+int cantidadLuchadores(FILE* arcLuchadores){
+    int cant = 0;
+	fseek(arcLuchadores, 0, SEEK_END);
+	cant = ftell(arcLuchadores)/sizeof(sLuchador);
+	fseek(arcLuchadores, 0, SEEK_SET);
+    return cant;
+}
+void rankTop10(top10 rankLuchador, sNodoA* listaA){
+
+    if(listaA == NULL) return;
+
+    //cargamos los primeros 10
+    int cantidad = cargarPrimeros10(rankLuchador, listaA);
+
+    //ordenamos el vector
+    ordenarTop10(rankLuchador, cantidad);
+
+    //seguir recorriendo la lista
+    sNodoA* aux = listaA; //uso una estructura auxiliar para almacenar la lista y no trabajar sobre la original
+    int contador = 0;
+
+    // saltamos los primeros 10 ya cargados
+    while(aux != NULL && contador < cantidad){
+        aux = aux->siguiente;
+        contador++;
+    }
+
+    //compararo el resto de elementos de la lista
+    while(aux != NULL){
+        evaluarLuchador(rankLuchador, cantidad, aux->luchador);
+        aux = aux->siguiente;
+    }
+}
+
+void vaciarLista(sNodoA* lstA){
+	if(lstA==NULL){
+		return;
+	}
+	sNodoA* aux = lstA;
+	sNodoA* temp;
+	while(aux != NULL){
+		temp = aux;
+		aux = aux->siguiente;
+		delete temp;
+	}
+}
+//--------------------------------------------------------------
+
+// Funciones secundarias ---------------------------------------
+void insertarPorPeso(sNodoA* lstA, sLuchador luchador){
 	sNodoA* nuevo = new sNodoA;
 	sNodoA* aux = lstA;
 	nuevo->luchador = luchador;
@@ -170,7 +241,40 @@ sNodoA* buscarPorID(sNodoA* lstA, int id){
 }
 //--------------------------------------------------------------
 
+int calcularPuntaje(sLuchador luchador){
+    return luchador.victorias - luchador.derrotas;
+}
 
+int cargarPrimeros10(top10 rankLuchador, sNodoA* listaA){
+	sNodoA* aux = listaA;
+    int i = 0;
+    while(aux != NULL && i < 10){
+        rankLuchador[i] = aux->luchador;
+        aux = aux->siguiente;
+        i++;
+    }
+    return i; // devuelve cantidad cargada, por las dudas de si hay menos de 10
+}
 
+void ordenarTop10(top10 rankL, int cantidad){
+    for(int i = 0; i < cantidad - 1; i++){
+        for(int j = 0; j < cantidad - i - 1; j++){
+            if(calcularPuntaje(rankL[j]) < calcularPuntaje(rankL[j+1])){
+                sLuchador aux = rankL[j];
+                rankL[j] = rankL[j+1];
+                rankL[j+1] = aux;
+            }
+        }
+    }
+}
 
+void evaluarLuchador(top10 rankLuchador, int cantidad, sLuchador candidato){
+    int puntajeCandidato = calcularPuntaje(candidato);//calculo el de un candito de la lista
+    int puntajeUltimo = calcularPuntaje(rankLuchador[cantidad - 1]); //comparo con el ultimo del array que ya esta ordenado
+
+    if(puntajeCandidato > puntajeUltimo){
+        rankLuchador[cantidad - 1] = candidato;
+        ordenarTop10(rankLuchador, cantidad); //vuelvo a ordenar por si el que puse en ultimo lugar es mayor a alguno del array
+    }
+}
 
