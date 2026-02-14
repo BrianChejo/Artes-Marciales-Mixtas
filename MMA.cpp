@@ -88,7 +88,7 @@ void mostrarMenu(){
 }
 
 // Funciones Principales ---------------------------------------
-void incripcionAtleta(sNodoA* lstA, sLuchador nuevo, int &id_luchador){
+void incripcionAtleta(sNodoA*& lstA, sLuchador nuevo, int &id_luchador){
 	cout<< "                     INSCRIPCION ATLETA " << endl;
 	id_luchador++;
 	nuevo.id_luchador = id_luchador;
@@ -216,7 +216,7 @@ void vaciarLista(sNodoA* lstA){
 //--------------------------------------------------------------
 
 // Funciones secundarias ---------------------------------------
-void insertarPorPeso(sNodoA* lstA, sLuchador luchador){
+void insertarPorPeso(sNodoA*& lstA, sLuchador luchador){
 	sNodoA* nuevo = new sNodoA;
 	sNodoA* aux = lstA;
 	nuevo->luchador = luchador;
