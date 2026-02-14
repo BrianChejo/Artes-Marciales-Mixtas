@@ -202,28 +202,28 @@ void rankTop10(top10 rankLuchador, sNodoA* listaA){
 }
 
 void vaciarLista(sNodoA*& lstA){
-	if(lstA==NULL){
-		return;
-	}
-	sNodoA* aux = lstA;
-	sNodoA* temp;
-	while(aux != NULL){
-		temp = aux;
-		aux = aux->siguiente;
-		delete temp;
-	}
+    sNodoA* aux;
+    while(lstA != NULL){
+        aux = lstA;
+        lstA = lstA->siguiente;
+        delete aux;
+    }
 }
 //--------------------------------------------------------------
 
 // Funciones secundarias ---------------------------------------
 void insertarPorPeso(sNodoA*& lstA, sLuchador luchador){
 	sNodoA* nuevo = new sNodoA;
-	sNodoA* aux = lstA;
 	nuevo->luchador = luchador;
-	if(lstA == NULL){
-		lstA = nuevo;
-		return;
-	}
+	nuevo->siguiente = NULL;
+	
+	// Si la lista está vacía o el peso es menor al primero
+    if(lstA == NULL || luchador.peso < lstA->luchador.peso){
+        nuevo->siguiente = lstA;
+        lstA = nuevo;
+        return;
+    }
+	sNodoA* aux = lstA;
 	while(aux->siguiente != NULL && aux->siguiente->luchador.peso < luchador.peso){
 		aux = aux->siguiente;
 	}
