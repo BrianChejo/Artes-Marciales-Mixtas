@@ -25,8 +25,8 @@ void incripcionAtleta(sNodoA*& lstA, sLuchador nuevo, int &id_luchador);
 void generarMainCard(sNodoA* lstA, int id_luchador);
 void actualizarRecord(sNodoA* lstA);
 void guardarGym(FILE* arcLuchadores, sNodoA* lstA);
-void cargarGym(FILE* arcLuchadores, sNodoA* lstA, int &id_luchador);
-void vaciarLista(sNodoA* lstA);
+void cargarGym(FILE* arcLuchadores, sNodoA*& lstA, int &id_luchador);
+void vaciarLista(sNodoA*& lstA);
 void insertarPorPeso(sNodoA*& lstA, sLuchador luchador);
 sNodoA* buscarPorID(sNodoA* lstA, int id);
 int calcularPuntaje(sLuchador luchador);
@@ -147,7 +147,7 @@ void guardarGym(FILE* arcLuchadores, sNodoA* lstA){
 	}
 	fclose(arcLuchadores);	
 }
-void cargarGym(FILE* arcLuchadores, sNodoA* lstA, int &id_luchador){
+void cargarGym(FILE* arcLuchadores, sNodoA*& lstA, int &id_luchador){
 	arcLuchadores = fopen("luchadores.dat", "rb");
 	if(arcLuchadores == NULL){
 		cout<< "Error al abrir el archivo"<<endl;
@@ -201,7 +201,7 @@ void rankTop10(top10 rankLuchador, sNodoA* listaA){
     }
 }
 
-void vaciarLista(sNodoA* lstA){
+void vaciarLista(sNodoA*& lstA){
 	if(lstA==NULL){
 		return;
 	}
