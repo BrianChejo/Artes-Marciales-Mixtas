@@ -21,13 +21,13 @@ typedef sLuchador top10[10];
 
 //Funciones a Utilzar
 void mostrarMenu();
-void incripcionAtleta(sNodoA* lstA, sLuchador nuevo, int &id_luchador);
+void incripcionAtleta(sNodoA*& lstA, sLuchador nuevo, int &id_luchador);
 void generarMainCard(sNodoA* lstA, int id_luchador);
 void actualizarRecord(sNodoA* lstA);
 void guardarGym(FILE* arcLuchadores, sNodoA* lstA);
 void cargarGym(FILE* arcLuchadores, sNodoA* lstA, int &id_luchador);
 void vaciarLista(sNodoA* lstA);
-void insertarPorPeso(sNodoA* lstA, sLuchador luchador);
+void insertarPorPeso(sNodoA*& lstA, sLuchador luchador);
 sNodoA* buscarPorID(sNodoA* lstA, int id);
 int calcularPuntaje(sLuchador luchador);
 int cantidadLuchadores(FILE* arcLuchadores);
