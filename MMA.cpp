@@ -148,6 +148,7 @@ void guardarGym(FILE* arcLuchadores, sNodoA* lstA){
 	fclose(arcLuchadores);	
 }
 void cargarGym(FILE* arcLuchadores, sNodoA*& lstA, int &id_luchador){
+	vaciarLista(lstA); //si cargas 2 veces seguidas duplica los luchadores entonces vacias la lista antes de cargar
 	arcLuchadores = fopen("luchadores.dat", "rb");
 	if(arcLuchadores == NULL){
 		cout<< "Error al abrir el archivo"<<endl;
