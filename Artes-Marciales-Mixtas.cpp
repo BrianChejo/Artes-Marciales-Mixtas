@@ -159,6 +159,7 @@ void guardarGym(FILE* arcLuchadores, sNodoA* lstA){
 		fwrite(&aux->luchador, sizeof(sLuchador), 1, arcLuchadores);
 		aux = aux->siguiente;
 	}
+	cout<<"el guardado de datos en el archivo fue exitoso"<<endl;
 	fclose(arcLuchadores);	
 }
 void cargarGym(FILE* arcLuchadores, sNodoA*& lstA, int &id_luchador){
@@ -176,6 +177,7 @@ void cargarGym(FILE* arcLuchadores, sNodoA*& lstA, int &id_luchador){
 		fread(&aux, sizeof(sLuchador), 1, arcLuchadores);
 		insertarPorPeso(lstA, aux);
 	}
+	cout<<"la carga de datos a memoria fue exitosa"<<endl;
 	fclose(arcLuchadores);
 }
 // -------------------------------------------------------------
@@ -291,4 +293,5 @@ void evaluarLuchador(top10 rankLuchador, int cantidad, sLuchador candidato){
         rankLuchador[cantidad - 1] = candidato;
         ordenarTop10(rankLuchador, cantidad); //vuelvo a ordenar por si el que puse en ultimo lugar es mayor a alguno del array
     }
+
 }
