@@ -1,7 +1,5 @@
 #include <iostream>
-
 using namespace std;
-
 // Estructuras
 struct sLuchador{
     int id_luchador;
@@ -32,6 +30,7 @@ int cantidadLuchadores(FILE* arcLuchadores);
 int cargarPrimeros10(top10 rankLuchador, sNodoA* listaA);
 void ordenarTop10(top10 rankLuchador, int cantidad);
 void evaluarLuchador(top10 rankLuchador, int cantidad, sLuchador luchador);
+void rankTop10(top10 rankLuchador, sNodoA* listaA);
 
 int main() {
     // Definion de variables a utilizarf
@@ -42,7 +41,7 @@ int main() {
     sNodoA *lst_atletas = 0;
     FILE* arcLuchadores;
     do{
-    	mostrarMenu();
+    mostrarMenu();
 		cin>> opc;
     	switch(opc){
     		case 1:
@@ -63,11 +62,10 @@ int main() {
 			case 0:
 				vaciarLista(lst_atletas);
 				break;
-			default: 
+			default:
 				cout<< "Opcion invalida"<<endl;
 				break;
 		}
-    	
 	}while(opc!=0);
     
     return 0;
@@ -87,7 +85,7 @@ void mostrarMenu(){
 
 // Funciones Principales ---------------------------------------
 void incripcionAtleta(sNodoA*& lstA, sLuchador nuevo, int &id_luchador){
-	cout<< "                     INSCRIPCION ATLETA " << endl;
+	cout<< "                 INSCRIPCION ATLETA " << endl;
 	id_luchador++;
 	nuevo.id_luchador = id_luchador;
 	cout<< "Ingrese nombre: ";
@@ -108,18 +106,21 @@ void generarMainCard(sNodoA* lstA, int id_luchador){
 		cout<< "No hay suficientes luchadores" << endl;
 		return;
 	}
-	sNodoA* aux = lstA;
-	short cantP = 5;
-	cout<< "                     MAIN CARD " << endl;
+
+	top10 ranking = {0};
+
+	// Genera el ranking real
+	rankTop10(ranking, lstA);
+
+	cout<< "                     MAIN CARD (TOP 10)" << endl;
 	cout<< "" << endl;
-	for (int i = 0; i < cantP; i++){
-		cout<< aux->luchador.nombre << " '" << aux->luchador.apodo << "', (Ranking #" << (i*2 + 1) 
-			<< ", Record: " << aux->luchador.victorias << "v-" << aux->luchador.derrotas << "d)" 
-			<< "  vs  " 
-			<< aux->siguiente->luchador.nombre << " '" << aux->siguiente->luchador.apodo << "', (Ranking #" << (i*2 + 2) 
-			<< ", Record: " << aux->siguiente->luchador.victorias << "v-" << aux->siguiente->luchador.derrotas << "d)" << endl;
-		
-		aux = aux->siguiente->siguiente;
+
+	for (int i = 0; i < 5; i++){
+		cout<< ranking[i*2].nombre << " '" << ranking[i*2].apodo << "', (Ranking #" << (i*2 + 1)
+			<< ", Record: " << ranking[i*2].victorias << "v-" << ranking[i*2].derrotas << "d)"
+			<< "  vs  "
+			<< ranking[i*2 + 1].nombre << " '" << ranking[i*2 + 1].apodo << "', (Ranking #" << (i*2 + 2)
+			<< ", Record: " << ranking[i*2 + 1].victorias << "v-" << ranking[i*2 + 1].derrotas << "d)" << endl;
 	}
 }
 void actualizarRecord(sNodoA* lstA){
@@ -159,8 +160,8 @@ void guardarGym(FILE* arcLuchadores, sNodoA* lstA){
 		fwrite(&aux->luchador, sizeof(sLuchador), 1, arcLuchadores);
 		aux = aux->siguiente;
 	}
-	cout<<"el guardado de datos en el archivo fue exitoso"<<endl;
-	fclose(arcLuchadores);	
+	cout<<"el guardado fue exitoso"<<endl;
+	fclose(arcLuchadores);
 }
 void cargarGym(FILE* arcLuchadores, sNodoA*& lstA, int &id_luchador){
 	vaciarLista(lstA); //si cargas 2 veces seguidas duplica los luchadores entonces vacias la lista antes de cargar
@@ -177,7 +178,7 @@ void cargarGym(FILE* arcLuchadores, sNodoA*& lstA, int &id_luchador){
 		fread(&aux, sizeof(sLuchador), 1, arcLuchadores);
 		insertarPorPeso(lstA, aux);
 	}
-	cout<<"la carga de datos a memoria fue exitosa"<<endl;
+	cout<< "la carga fue exitosa"<<endl;
 	fclose(arcLuchadores);
 }
 // -------------------------------------------------------------
@@ -293,5 +294,4 @@ void evaluarLuchador(top10 rankLuchador, int cantidad, sLuchador candidato){
         rankLuchador[cantidad - 1] = candidato;
         ordenarTop10(rankLuchador, cantidad); //vuelvo a ordenar por si el que puse en ultimo lugar es mayor a alguno del array
     }
-
 }
